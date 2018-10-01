@@ -8,20 +8,17 @@ exec 2>&1
 echo "Log Location should be: [ $LOG_LOCATION ]"
 
 
+SERVICE_NAME=$(env | grep POD_NAME=| cut -d '=' -f2| cut -d '-' -f1 | tr '[a-z]' '[A-Z]')
+
 if [[ ${CONTAINER_PORT} != "" ]]; then
     SERVICE_PORT=${CONTAINER_PORT}
-
-#elif [[ ${SERVICE_NAME} != "" ]]; then
-#  SERVICE_NAME_UPPERCASE=`echo "${SERVICE_NAME}" | tr '[a-z]' '[A-Z]'`
-#  SERVICE_PORT_NAME=${SERVICE_NAME_UPPERCASE}_SERVICE_PORT
-#  SERVICE_PORT=${!SERVICE_PORT_NAME}
 else
-  SERVICE_PORT=$(env | grep SERVICE_PORT_HTTP=| cut -d '=' -f 2)
+  ## We should create a Service name label if the deployment name is not same as service name
+  ## In most of the cases it will work. The workaround is to add a containerPort label
+  
+  SERVICE_PORT=$(env | grep ${SERVICE_NAME}_SERVICE_PORT_HTTP=| cut -d '=' -f 2)
 fi
 
-SERVICE_NAME=$(env | grep SERVICE_PORT_HTTP=| cut -d '_' -f 1 | tr '[A-Z]' '[a-z]') 
-
-#product_name=$proxy_name-product
 proxy_name=edgemicro_${SERVICE_NAME}
 target_port=$SERVICE_PORT
 base_path=/
