@@ -33,13 +33,17 @@ Private.prototype.configureEdgemicro = function (options, cb) {
     console.error("Missing %s, Please run 'edgemicro init'",configLocations.getDefaultPath(options.configDir))
     return cb("Please call edgemicro init first")
   }
-  assert(options.username, 'username is required');
+
+  if(!options.token) {
+    assert(options.username, 'username is required');
+    assert(options.password, 'password is required');
+  }
+
   assert(options.org, 'org is required');
   assert(options.env, 'env is required');
   assert(options.runtimeUrl, 'runtimeUrl is required');
   assert(options.mgmtUrl, 'mgmtUrl is required');
-  assert(options.password, 'password is required');
-
+  
   const cache = configLocations.getCachePath(options.org, options.env);
   console.log('delete cache config');
   if (fs.existsSync(cache)) {
@@ -265,7 +269,7 @@ Private.prototype.configureEdgemicroWithCreds = function configureEdgemicroWithC
     that.cert.checkPrivateCert(options, function (err, certs) {
       if (err) {
         console.log('error checking for cert. Installing new cert.');
-        that.cert.installPrivateCert(options, callback);
+        that.cert.installCertWithPassword(options, callback);
       } else {
         console.log('KVM already exists in your org');
         that.cert.retrievePublicKeyPrivate(callback);

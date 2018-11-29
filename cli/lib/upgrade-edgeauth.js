@@ -38,6 +38,13 @@ UpgradeAuth.prototype.upgradeauth = function upgradeauth(options, cb) {
         virtualhosts: opts.virtualHosts
     };
 
+    if (options.token) {
+        opts.token = options.token;
+    } else {
+        opts.username = options.username;
+        opts.password = options.password;
+    }
+
     deployAuth = deployAuthLib(edge_config, null);
 
     deployAuth.deployProxyWithPassword(options.mgmtUrl, 'na', opts, opts.directory, function(err, result) {

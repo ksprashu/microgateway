@@ -1,6 +1,6 @@
 {
   "name": "edgemicro",
-  "version": "2.5.26",
+  "version": "2.5.27",
   "description": "Apigee Edge Microgateway",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -8,6 +8,7 @@
     "edgemicro": "./cli/edgemicro"
   },
   "dependencies": {
+    "@google-cloud/trace-agent": "^3.1.1",
     "apigeetool": "^0.7.0",
     "async": "^1.5.2",
     "body-parser": "^1.12.4",
@@ -25,9 +26,9 @@
     "log-symbols": "^1.0.2",
     "memored": "^1.1.1",
     "microgateway-config": "^2.4.11",
-    "microgateway-core": "^2.5.13",
+    "microgateway-core": "^2.5.14",
     "microgateway-edgeauth": "^2.4.3",
-    "microgateway-plugins": "^2.3.27",
+    "microgateway-plugins": "^2.3.30",
     "pem": "^1.8.1",
     "portastic": "^1.0.1",
     "request": "^2.87.0",

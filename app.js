@@ -16,6 +16,12 @@ options.org = process.env.EDGEMICRO_ORG;
 options.configDir = process.env.EDGEMICRO_CONFIG_DIR || os.homedir()+"/.edgemicro";
 options.configUrl = process.env.EDGEMICRO_CONFIG_URL;
 options.processes = process.env.EDGEMICRO_PROCESSES || os.cpus().length;
+options.pluginDir = process.env.EDGEMICRO_PLUGIN_DIR;
+options.apiProxyName = process.env.EDGEMICRO_API_PROXYNAME;
+options.revision = process.env.EDGEMICRO_API_REVISION;
+options.basepath = process.env.EDGEMICRO_API_BASEPATH;
+options.target = process.env.EDGEMICRO_API_TARGET;
+
 options.port = process.env.PORT || 8000;
 
 if (!options.key ) { console.log('key is required'); process.exit(1);}

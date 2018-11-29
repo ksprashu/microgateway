@@ -97,7 +97,7 @@ Configure.prototype.configure = function configure(options, cb) {
           console.error(err);
           cb ? cb(err) : process.exit(1);
         }
-        cb ? cb(err) : process.exit(0)
+        cb ? cb(err) : process.exit(0);
       });
     })
   });
@@ -109,16 +109,11 @@ function configureEdgemicroWithCreds(options, cb) {
   var tasks = [],
     agentConfigPath;
 	
-  const jwtSearch = _.find(options.deployments, function (proxy) {
-    return proxy.name === options.proxyName;
-  });
-  if (!jwtSearch) {
+  if (!options.deployed) {
     tasks.push(function (callback) {
       deployAuth.deployWithLeanPayload(options, callback);
     });
-  } else {
-    //console.log('App ', options.proxyName, ' is already deployed!');
-  }
+  } 
 
   tasks.push(
     function (callback) {
@@ -159,7 +154,7 @@ function configureEdgemicroWithCreds(options, cb) {
 
     addEnvVars(agentConfig);
 
-    if (!jwtSearch) {
+    if (!options.deployed) {  
       agentConfig['edge_config']['jwt_public_key'] = (options.url ? options.url+"/edgemicro-auth/publicKey" : results[0]); // get deploy results
       agentConfig['edge_config'].bootstrap = results[2].bootstrap; // get genkeys results
     } else {
@@ -194,7 +189,7 @@ function configureEdgemicroWithCreds(options, cb) {
     edgeconfig.save(agentConfig, agentConfigPath); // if it didn't throw, save succeeded
     console.log();
 
-    if (jwtSearch) {
+    if (options.deployed) {  
       console.log('vault info:\n', results[0]);
     } else {
       console.log('vault info:\n', results[1]);

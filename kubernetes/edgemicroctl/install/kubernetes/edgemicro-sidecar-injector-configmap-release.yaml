@@ -25,6 +25,10 @@ data:
       containers:
       - name: edge-microgateway
         image: gcr.io/apigee-microgateway/edgemicro:latest
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 100
+          runAsGroup: 101
         ports:
         - containerPort: 8000
         env:

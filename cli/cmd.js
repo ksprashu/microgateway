@@ -466,26 +466,33 @@ const setup = function setup() {
         .option('-e, --env <env>', 'the environment')
         .option('-u, --username <user>', 'username of the organization admin')
         .option('-p, --password <password>', 'password of the organization admin')
+        .option('-t, --token <token>', 'OAuth token to use with management API')
         .option('-v, --virtualhost <virtualhost>', 'virtual host of the proxy')
         .option('-b, --baseuri <baseuri>', 'baseuri for management apis')
         .description('upgrade edgemicro-auth proxy')
         .action((options) => {
             options.error = optionError;
-            if (!options.username) {
-                return options.error('username is required');
-            }
+            options.token = options.token || process.env.EDGEMICRO_SAML_TOKEN;
+
             if (!options.org) {
                 return options.error('org is required');
             }
             if (!options.env) {
                 return options.error('env is required');
             }
-            promptForPassword(options, (options) => {
-                if (!options.password) {
-                    return options.error('password is required');
-                }
+            if (options.token) {
                 upgradeauth.upgradeauth(options, () => {});
-            })
+            } else {
+                if (!options.username) {
+                    return options.error('username is required');
+                }
+                promptForPassword(options, (options) => {
+                    if (!options.password) {
+                        return options.error('password is required');
+                    }
+                    upgradeauth.upgradeauth(options, () => {});
+                });
+            }
         });
 
     commander

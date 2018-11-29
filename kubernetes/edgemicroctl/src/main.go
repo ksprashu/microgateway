@@ -187,6 +187,16 @@ func createSecContext() *v1.SecurityContext {
 	return &secContext
 }
 
+func createPodSecContext(user int64, group int64) *v1.PodSecurityContext {
+	podSecContext := v1.PodSecurityContext{}
+	var nonRoot bool = true
+
+	//podSecContext.RunAsGroup = &group
+	podSecContext.RunAsUser = &user
+	podSecContext.RunAsNonRoot = &nonRoot
+	return &podSecContext;
+}
+
 func createCapabilities() *v1.Capabilities {
 	capabilities := v1.Capabilities{}
 	capabilities.Add = append(capabilities.Add, "NET_ADMIN")
@@ -286,7 +296,8 @@ func recurse(yamlDecoder io.ReadCloser, reader *os.File, yamlData []byte) {
 		if err != nil {
 			panic(err)
 		}
-
+		//set security context
+		deployment.Spec.Template.Spec.SecurityContext = createPodSecContext(100, 101)
 		deployment.Spec.Template.Spec.Containers = append(deployment.Spec.Template.Spec.Containers, createContainer(img))
 		deployment.Spec.Template.Spec.InitContainers = getInitContainers()
 		newDeployment, _ := json.Marshal(&deployment)
@@ -337,6 +348,9 @@ func createDeployment() (appsv1beta1.Deployment, error) {
 	metadata.Namespace = namespace
 	deploymentSpec := appsv1beta1.DeploymentSpec{}
 	podSpec := v1.PodSpec{}
+
+	//set pod security 
+	podSpec.SecurityContext = createPodSecContext(100,101)
 
 	podSpec.Containers = append(podSpec.Containers, createContainer(img))
 	template := v1.PodTemplateSpec{}

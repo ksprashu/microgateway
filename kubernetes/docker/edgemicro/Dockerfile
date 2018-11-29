@@ -1,37 +1,29 @@
-FROM ubuntu:bionic
-#FROM centos:centos7
-#FROM node:slim
+FROM node:8-alpine
 
-#RUN yum install epel-release -y && yum install nodejs -y
-# For CentOS 7
-#RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
-#RUN yum install -y nodejs
-#RUN yum clean all
-#RUN rm -rf /var/cache/yum
+COPY install.sh /tmp
 
-# For Ubuntu
-RUN apt-get update && apt-get install -y gnupg curl
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get install -y nodejs
+# create user and group for microgateway
+RUN apk add --no-cache sed grep && \
+    addgroup -S apigee -g 101 && \
+    adduser -s /bin/sh -u 100 -S -G apigee apigee -h /opt/apigee
 
-# Upgrade npm
-RUN npm i npm@latest -g
+WORKDIR /opt/apigee
 
-# Initialize Microgateway
-RUN groupadd apigee
-RUN useradd apigee -g apigee -m -d /opt/apigee
-RUN npm install -g edgemicro
-RUN su - apigee -c "edgemicro init"
+# copy entrypoint
+COPY entrypoint.sh /opt/apigee
 
-# Create volumes for logs
-RUN mkdir -p /opt/apigee/logs
+ENV NODE_ENV production
+
+#install and initialize microgateway
+RUN chmod +x /tmp/install.sh && \
+    sh /tmp/install.sh && \
+    rm -f /tmp/install.sh && \
+    deluser --remove-home node
+
 VOLUME /opt/apigee/.edgemicro
 VOLUME /opt/apigee/logs
-RUN chown apigee:apigee /opt/apigee/.edgemicro/*
+VOLUME /opt/apigee/plugins
 
-COPY entrypoint.sh /tmp
-COPY proxies.yaml /tmp
-RUN chmod +x /tmp/entrypoint.sh
 # copy tls files if needed
 # COPY key.pem /opt/apigee/.edgemicro
 # COPY cert.pem /opt/apigee/.edgemicro
@@ -39,5 +31,5 @@ RUN chmod +x /tmp/entrypoint.sh
 # Expose ports
 EXPOSE 8000
 EXPOSE 8443
-
-ENTRYPOINT ["/tmp/entrypoint.sh"]
+USER apigee
+ENTRYPOINT ["entrypoint"]

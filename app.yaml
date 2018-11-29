@@ -13,7 +13,7 @@
 #
 # [START runtime]
 service: microgateway
-runtime: nodejs
+runtime: nodejs8
 env: flex
 automatic_scaling:
   min_num_instances: 1

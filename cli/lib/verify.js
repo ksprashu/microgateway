@@ -116,6 +116,10 @@ Verify.prototype.verify = function verify(options) {
       //const productsUrl = util.format(authUri + '/products', options.org, options.env);
       request({
         method: 'GET',
+        auth: {
+          user: key,
+          pass: secret
+        },        
         uri: productsUrl
       },
         function (err, res, body) {

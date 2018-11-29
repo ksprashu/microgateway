@@ -1,8 +1,7 @@
 #!/bin/bash
 
-docker create --name edgemicro -v $PWD/config:/opt/apigee/.edgemicro -v $PWD/logs:/opt/apigee/logs $PWD/plugins:/opt/apigee/plugins -e EDGEMICRO_ORG=gaccelerate5 -e EDGEMICRO_ENV=test -e EDGEMICRO_KEY=key -e EDGEMICRO_SECRET=secret -e EDGEMICRO_DECORATOR=1 -p 8000:8000 -p 8443:8443 -P -it edgemicro 
-docker start $(docker ps -aqf name=edgemicro)
-docker ps
+docker run -P -p 8000:8000 -d --name edgemicro -e EDGEMICRO_ORG=$EDGEMICRO_ORG -e EDGEMICRO_ENV=$EDGEMICRO_ENV -e EDGEMICRO_KEY=$EDGEMICRO_KEY -e EDGEMICRO_SECRET=$EDGEMICRO_SECRET -e EDGEMICRO_CONFIG=$EDGEMICRO_CONFIG -e SERVICE_NAME=edgemicro --user apigee:apigee --security-opt=no-new-privileges --cap-drop=ALL gcr.io/apigee-microgateway/edgemicro:latest
+
 echo "Testing the api"
 sleep 5
 curl http://localhost:8000;echo;

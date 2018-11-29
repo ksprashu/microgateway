@@ -1,0 +1,5 @@
+{
+    "logLevel": 4,
+    "enabled": true,
+    "flushDelaySeconds": 5    
+}
